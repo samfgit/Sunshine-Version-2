@@ -29,14 +29,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class ForecastFragment extends Fragment {
 
-    String zipCode = "94043";
-    ListView weatherView;
+    private String mZipCode = "94043";
+    private ListView weatherView;
+    private ArrayAdapter<String> mStringArrayAdapter;
+
 
     public ForecastFragment() {
     }
@@ -59,7 +63,7 @@ public class ForecastFragment extends Fragment {
         if (id==R.id.action_refresh) {
             Log.i("ForecastFragment","Refresh Pressed");
 
-            String myUri = makeURI(zipCode);
+            String myUri = makeURI(mZipCode);
             new FetchWeatherTask().execute(myUri);
             return true;
         }
@@ -86,12 +90,12 @@ public class ForecastFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                zipCode = editable.toString();
-                Log.v("zipCodeChanged:",zipCode);
+                mZipCode = editable.toString();
+                Log.v("zipCodeChanged:", mZipCode);
             }
         });
 
-        String[] weekForecast = {
+        /*String[] weekForecast = {
                 "Today - Sunny - 88/63",
                 "Tomorrow - Foggy - 70/46",
                 "Wednesday - Cloudy - 72/63",
@@ -99,30 +103,21 @@ public class ForecastFragment extends Fragment {
                 "Friday - Foggy - 70/46",
                 "Saturday - Cloudy - 72/63",
                 "Sunday - Sunny - 88/63",
-                "Monday - Foggy - 70/46",
-                "Tuesday - Cloudy - 72/63",
-                "Wednesday - Cloudy - 72/63",
-                "Thursday - Sunny - 88/63",
-                "Friday - Foggy - 70/46",
-                "Saturday - Cloudy - 72/63",
-                "Sunday - Sunny - 88/63",
-                "Monday - Foggy - 70/46",
-                "Tuesday - Cloudy - 72/63",
-                "Wednesday - Cloudy - 72/63",
-                "Thursday - Sunny - 88/63",
-                "Friday - Foggy - 70/46",
-                "Saturday - Cloudy - 72/63",
-                "Sunday - Sunny - 88/63",
-                "Monday - Foggy - 70/46",
-                "Tuesday - Cloudy - 72/63"};
+                "Monday - Foggy - 70/46"};
+        */
+        List<String> initList = new ArrayList<>();
+        mStringArrayAdapter = new ArrayAdapter<String>(
+                getActivity(),
+                R.layout.list_item_forcast,
+                R.id.list_item_forecast_textveiw,
+                initList);
 
         weatherView = (ListView)rootView.findViewById(R.id.listview_forecast);
+        weatherView.setAdapter(mStringArrayAdapter);
 
-        zipCode = zipCodeEditText.getText().toString();
-        String myUri = makeURI(zipCode);
+        mZipCode = zipCodeEditText.getText().toString();
+        String myUri = makeURI(mZipCode);
         new FetchWeatherTask().execute(myUri);
-
-
 
         return rootView;
     }
@@ -200,16 +195,10 @@ public class ForecastFragment extends Fragment {
             try {
                 String[] readableWeather = getWeatherDataFromJson(result, 7);
                 Log.v("logMe", readableWeather[0]);
-
-                ArrayAdapter<String> stringArrayAdapter =
-                        new ArrayAdapter<String>(
-                                getActivity(),
-                                R.layout.list_item_forcast,
-                                R.id.list_item_forecast_textveiw,
-                                readableWeather);
-
-
-                weatherView.setAdapter(stringArrayAdapter);
+                mStringArrayAdapter.clear();
+                for (String s: readableWeather) {
+                    mStringArrayAdapter.add(s);
+                }
             }
             catch (JSONException e) {
                 Log.e("JSON", e.getMessage());
@@ -233,7 +222,7 @@ public class ForecastFragment extends Fragment {
                 .appendQueryParameter("units", "metric")
                 .appendQueryParameter("appid", BuildConfig.OPEN_WEATHER_MAP_API_KEY);
         String myUrl = builder.build().toString();
-        Log.v("URI",myUrl);
+        Log.v("URI", myUrl);
         return myUrl;
     }
 
@@ -270,12 +259,12 @@ public class ForecastFragment extends Fragment {
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
-        final String OWM_LIST = "list";
-        final String OWM_WEATHER = "weather";
-        final String OWM_TEMPERATURE = "temp";
-        final String OWM_MAX = "max";
-        final String OWM_MIN = "min";
-        final String OWM_DESCRIPTION = "main";
+        final String   OWM_LIST = "list";
+        final String   OWM_WEATHER = "weather";
+        final String   OWM_TEMPERATURE = "temp";
+        final String   OWM_MAX = "max";
+        final String   OWM_MIN = "min";
+        final String   OWM_DESCRIPTION = "main";
 
         JSONObject forecastJson = new JSONObject(forecastJsonStr);
         JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
