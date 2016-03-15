@@ -14,9 +14,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,8 +40,8 @@ import java.util.List;
 public class ForecastFragment extends Fragment {
 
     private String mZipCode = "94043";
-    private ListView weatherView;
-    private ArrayAdapter<String> mStringArrayAdapter;
+    private ListView mWeatherView;
+    private ArrayAdapter<String> mForecastWeatherAdapter;
 
 
     public ForecastFragment() {
@@ -91,29 +93,26 @@ public class ForecastFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 mZipCode = editable.toString();
-                //Log.v("zipCodeChanged:", mZipCode);
             }
         });
 
-        /*String[] weekForecast = {
-                "Today - Sunny - 88/63",
-                "Tomorrow - Foggy - 70/46",
-                "Wednesday - Cloudy - 72/63",
-                "Thursday - Sunny - 88/63",
-                "Friday - Foggy - 70/46",
-                "Saturday - Cloudy - 72/63",
-                "Sunday - Sunny - 88/63",
-                "Monday - Foggy - 70/46"};
-        */
         List<String> initList = new ArrayList<>();
-        mStringArrayAdapter = new ArrayAdapter<String>(
+        mForecastWeatherAdapter = new ArrayAdapter<String>(
                 getActivity(),
                 R.layout.list_item_forcast,
                 R.id.list_item_forecast_textveiw,
                 initList);
 
-        weatherView = (ListView)rootView.findViewById(R.id.listview_forecast);
-        weatherView.setAdapter(mStringArrayAdapter);
+        mWeatherView = (ListView)rootView.findViewById(R.id.listview_forecast);
+        mWeatherView.setAdapter(mForecastWeatherAdapter);
+
+        mWeatherView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String selectedInfo = adapterView.getItemAtPosition(i).toString();
+                Toast.makeText(getActivity(), selectedInfo, Toast.LENGTH_LONG).show();
+            }
+        });
 
         mZipCode = zipCodeEditText.getText().toString();
         String myUri = makeURI(mZipCode);
@@ -121,6 +120,9 @@ public class ForecastFragment extends Fragment {
 
         return rootView;
     }
+
+
+    //region Fetch Weather Info
 
     private class FetchWeatherTask extends AsyncTask<String, Void, String>
     {
@@ -195,9 +197,9 @@ public class ForecastFragment extends Fragment {
             try {
                 String[] readableWeather = getWeatherDataFromJson(result, 7);
                 //Log.v("logMe", readableWeather[0]);
-                mStringArrayAdapter.clear();
+                mForecastWeatherAdapter.clear();
                 for (String s: readableWeather) {
-                    mStringArrayAdapter.add(s);
+                    mForecastWeatherAdapter.add(s);
                 }
             }
             catch (JSONException e) {
@@ -225,6 +227,9 @@ public class ForecastFragment extends Fragment {
         //Log.v("URI", myUrl);
         return myUrl;
     }
+    //endregion
+
+    //region Parse JSON Weather Info
 
     /* The date/time conversion code is going to be moved outside the asynctask later,
  * so for convenience we're breaking it out into its own method now.
@@ -324,15 +329,5 @@ public class ForecastFragment extends Fragment {
         return resultStrs;
 
     }
+    //endregion
 }
-
-/*
- JSONObject jObject = new JSONObject(weatherJsonStr);
-
-        JSONArray days = jObject.getJSONArray("list");
-        JSONObject c = days.getJSONObject(dayIndex);
-        JSONObject temp = c.getJSONObject("temp");
-        double maxTemp = temp.getDouble("max");
-
-		return maxTemp;
- */
