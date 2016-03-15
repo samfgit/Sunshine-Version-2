@@ -61,7 +61,7 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
 
         if (id==R.id.action_refresh) {
-            Log.i("ForecastFragment","Refresh Pressed");
+            //Log.i("ForecastFragment","Refresh Pressed");
 
             String myUri = makeURI(mZipCode);
             new FetchWeatherTask().execute(myUri);
@@ -91,7 +91,7 @@ public class ForecastFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 mZipCode = editable.toString();
-                Log.v("zipCodeChanged:", mZipCode);
+                //Log.v("zipCodeChanged:", mZipCode);
             }
         });
 
@@ -194,7 +194,7 @@ public class ForecastFragment extends Fragment {
             //showDialog("Downloaded " + result + " bytes");
             try {
                 String[] readableWeather = getWeatherDataFromJson(result, 7);
-                Log.v("logMe", readableWeather[0]);
+                //Log.v("logMe", readableWeather[0]);
                 mStringArrayAdapter.clear();
                 for (String s: readableWeather) {
                     mStringArrayAdapter.add(s);
@@ -222,7 +222,7 @@ public class ForecastFragment extends Fragment {
                 .appendQueryParameter("units", "metric")
                 .appendQueryParameter("appid", BuildConfig.OPEN_WEATHER_MAP_API_KEY);
         String myUrl = builder.build().toString();
-        Log.v("URI", myUrl);
+        //Log.v("URI", myUrl);
         return myUrl;
     }
 
@@ -319,7 +319,7 @@ public class ForecastFragment extends Fragment {
         }
 
         for (String s : resultStrs) {
-            Log.v("JsonFormatter", "Forecast entry: " + s);
+            //Log.v("JsonFormatter", "Forecast entry: " + s);
         }
         return resultStrs;
 
