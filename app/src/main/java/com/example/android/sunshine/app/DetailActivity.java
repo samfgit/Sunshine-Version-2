@@ -16,14 +16,16 @@
 
 package com.example.android.sunshine.app;
 
-        import android.os.Bundle;
-        import android.support.v4.app.Fragment;
-        import android.support.v7.app.ActionBarActivity;
-        import android.view.LayoutInflater;
-        import android.view.Menu;
-        import android.view.MenuItem;
-        import android.view.View;
-        import android.view.ViewGroup;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -35,6 +37,8 @@ public class DetailActivity extends ActionBarActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
+            //Toast.makeText(this, , Toast.LENGTH_LONG).show();
+
         }
     }
 
@@ -43,6 +47,7 @@ public class DetailActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.detail, menu);
+
         return true;
     }
 
@@ -74,6 +79,9 @@ public class DetailActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+            TextView weatherTextView = (TextView)rootView.findViewById(R.id.weatherTextView);
+            weatherTextView.setText(getActivity().getIntent().getExtras().getString(Intent.EXTRA_TEXT));
             return rootView;
         }
     }

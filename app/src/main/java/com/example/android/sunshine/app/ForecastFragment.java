@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -110,7 +110,13 @@ public class ForecastFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String selectedInfo = adapterView.getItemAtPosition(i).toString();
-                Toast.makeText(getActivity(), selectedInfo, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), selectedInfo, Toast.LENGTH_LONG).show();
+
+                // Executed in an Activity, so 'this' is the Context
+                // The fileUrl is a string URL, such as "http://www.example.com/image.png"
+                Intent detailIntent = new Intent(getActivity(),com.example.android.sunshine.app.DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT,selectedInfo);
+                startActivity(detailIntent);
             }
         });
 
