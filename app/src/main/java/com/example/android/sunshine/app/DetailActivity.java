@@ -79,9 +79,11 @@ public class DetailActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-
-            TextView weatherTextView = (TextView)rootView.findViewById(R.id.weatherTextView);
-            weatherTextView.setText(getActivity().getIntent().getExtras().getString(Intent.EXTRA_TEXT));
+            Intent curInent = getActivity().getIntent();
+            if (curInent!=null && curInent.hasExtra(Intent.EXTRA_TEXT)) {
+                TextView weatherTextView = (TextView) rootView.findViewById(R.id.weatherTextView);
+                weatherTextView.setText(curInent.getExtras().getString(Intent.EXTRA_TEXT));
+            }
             return rootView;
         }
     }
